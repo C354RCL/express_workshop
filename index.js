@@ -1,18 +1,25 @@
+const bodyParser = require('body-parser');
+const morgan = require('morgan')
 const express = require('express');
 const app = express();
+const pokemon = require('./routes/pokemon');
 
-// Verbos HTTP 
-// GET 
-// POST 
-// PATCH 
-// PUT 
-// DELETE 
+app.use(morgan('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// GET - obtener recursos 
+// POST - almacenar/crear recursos 
+// PATCH - modificar una parte del recurso 
+// PUT - modificar un recurso 
+// DELETE - borrar un recurso
 
 app.get("/", (req, res, next) => {
-    res.status(200);
-    res.send("Hola mundo");
+    return res.status(200).send("Bienvenido al Pokedex");
 });
 
-app.listen(3000, () => {
+app.use("/pokemon", pokemon);
+
+app.listen(process.env.PORT || 3000, () => {
     console.log('Server is running...')
 });

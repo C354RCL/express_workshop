@@ -7,31 +7,37 @@ pokemon.post("/", (req, res, next) => {
 });
 
 pokemon.get("/", async (req, res, next) => {
-    const pkmn = await db.query("SELECT * FROM pokemon")
+    const pkmn = await db.query("SELECT * FROM pokemon");
     return res.status(200).json(pkmn);
 });
 
-pokemon.get('/:id([0-9]{1,3})', (req, res, next) => {
-    const id = req.params.id - 1;
-    (id >= 0 && id >= 150) ?
-        res.status(200).send(pk[req.params.id-1]) :
-        res.status(404).send("Pokemon no encontrado");
+//Ruta pokemon/1243
+pokemon.get('/:id([0-9]{1,3})', async (req, res, next) => {
+    const idLength = await db.query('SELECT count(pok_id) FROM pokemon');
+    const id = req.params.id;
+    const pk = await db.query(`SELECT * FROM pokemon WHERE pok_id = ${id}`);
+
+    console.log(idLength);
+
+    if (id >= 1 && id <= 722) {
+        return res.status(200).json(pk)
+    } else {
+        return res.status(404).send("Pokemon no encontrado");
+    }
 });
 
-pokemon.get('/:name([A-Za-z]+)', (req, res, next) => {
+pokemon.get('/:name([A-Za-z]+)', async (req, res, next) => {
 
     // Operacion ternario
     // condicion ? valor si verdadero : valor si falso
 
     const name = req.params.name;
-
-    const pkmn = pk.filter( (p) => {
-        return (p.name.toLocaleUpperCase() == name.toLocaleUpperCase()) && p;
-    });
-
-    (pkmn.length > 0) ? 
-    res.status(200).send(pkmn) : 
-    res.status(404).send("Pokemon no encontrado");
+    name.toLowerCase();
+    const pkmn = await db.query(`SELECT * FROM pokemon WHERE pok_name = "${name}"`);
+    if (pkmn.length > 0) {
+        return res.status(200).send(pkmn);
+    }
+        return res.status(400).send('Pokemon no encontrado');
 });
 
 module.exports = pokemon;

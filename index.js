@@ -5,7 +5,7 @@ const pokemon = require('./routes/pokemon');
 
 app.use(morgan('dev'));
 app.use(express.json());
-app.use(express.urlencoded({extended : true}));
+app.use(express.urlencoded({ extended : true }));
 
 // GET - obtener recursos 
 // POST - almacenar/crear recursos 
